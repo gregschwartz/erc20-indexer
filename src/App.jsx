@@ -19,17 +19,17 @@ function App() {
     });
 
     if(addressArray.length==0) {
-      alert("MetaMask didn't return any addresses");
+      showError("MetaMask didn't return any addresses");
       return;
     }
     setUserAddress(addressArray[0]);
-    getTokenBalance();
   }
 
   async function getTokenBalance() {
+    setError("");
     setIsLoading(true);
 
-    if(!userAddress || userAddress.length==0) {
+    if(userAddress.length==0) {
       showError("Please enter an address");
       return;
     }
@@ -44,12 +44,9 @@ function App() {
       if(!data || data.length == 0) {
         //put up error somewhere
         showError("No balances found");
-        setHasQueried(false);
-        setIsLoading(false);
         return;
       }
 
-      setError("");
       setResults(data);
       console.log(data);
     } catch(exception) {
@@ -57,7 +54,6 @@ function App() {
       showError(exception.message);
       return;
     }
-
 
     const tokenDataPromises = [];
     for (let i = 0; i < data.tokenBalances.length; i++) {
@@ -73,8 +69,25 @@ function App() {
     setIsLoading(false);
   }
 
+  //use formatUnits(), then cut the number of decimal places down
+  function prettyBalance(numberAsString, index, decimalPlaces) {
+    const str = Utils.formatUnits(numberAsString, (tokenDataObjects[index] ? tokenDataObjects[index].decimals : 18));
+    const decimalAt = str.indexOf(".");
+
+    if(decimalAt < 0) { return str + ".0"; }
+
+    const whole = str.substring(0, decimalAt);
+    var decimals = "0." + str.substring(decimalAt + 1, decimalAt + 1 + decimalPlaces + 1);
+    if (decimals==0) { return whole + ".0"; }
+    
+    const rounded  = (+decimals).toFixed(decimalPlaces);
+    const pretty = whole + rounded.toString().substring(1);
+    console.log(str, whole, decimals, "rounded:", rounded, "t.f.", pretty);
+    return pretty;
+  }
+
   function showError(text) {
-    console.log("ready to show error");
+    console.log("Show error", text);
     setError(text);
     setHasQueried(false);
     setIsLoading(false);
@@ -107,19 +120,19 @@ function App() {
           justifyContent={'center'}
           mt={5}
         >
-          <Button fontSize={20} onClick={getAddressFromMetamask} bgColor="darkOrange" mb={1}>
-            Get my address via MetaMask
-          </Button>
-          Or
-          <HStack mt={2} mb={20} spacing={0}>
-            <label htmlFor={"addressInput"}>Address&nbsp;</label>
-            <Input onChange={(e) => setUserAddress(e.target.value)} id="addressInput" color="black" w="600px" textAlign="center" p={4} bgColor="white" fontSize={24} value={userAddress} placeholder="0xabc..." borderTopRightRadius={0} borderBottomRightRadius={0} />
-            <Button fontSize={20} onClick={getTokenBalance} bgColor="blue" color="white" borderTopLeftRadius={0} borderBottomLeftRadius={0}>
-              Check Balances
+          <HStack mt={2} spacing={3}>
+            <Button fontSize={20} onClick={getAddressFromMetamask} bgColor="darkOrange">
+              Get address via MetaMask
             </Button>
+            <label htmlFor={"addressInput"}>or enter address:</label>
+            <Input onChange={(e) => setUserAddress(e.target.value)} id="addressInput" color="black" w="600px" textAlign="center" p={4} bgColor="white" fontSize={24} value={userAddress} placeholder="0xabc..." />
           </HStack>
 
-          {isLoading && <Image  src="/public/Ethereum gold coin.gif" />}
+          <Button mt={5} mb={20} fontSize={20} onClick={getTokenBalance} bgColor="blue" color="white">
+            Check Balances of ERC-20 Tokens!
+          </Button>
+
+          {isLoading && <Image src="/Ethereum gold coin.gif" />}
           {error.length>0 && <Heading>Something went wrong: {error}</Heading>}
 
           {hasQueried ? (
@@ -150,11 +163,7 @@ function App() {
                     </Box>
                     <Box>
                       <b>Balance:</b>&nbsp;
-                      {Utils.formatUnits(
-                        e.tokenBalance,
-                        tokenDataObjects[i].decimals
-                      )}<br />Decimals: 
-                      {tokenDataObjects[i].decimals}
+                      {prettyBalance(e.tokenBalance, i, 5)}
                     </Box>
                     <Image src={tokenDataObjects[i].logo} />
                   </Flex>
