@@ -1,3 +1,77 @@
+.erc20, .erc20 label {
+  background-color: #b2a3b5;
+  color: #000;
+}
+
+.erc20, .erc20 h2 {
+  color: #91818A;
+}
+
+.erc20 button.primary {
+  background-color: #2b3e82;
+  color: white;
+}
+
+.erc20 button.secondary {
+  background-color: #151e3f;
+  color: white;
+}
+
+.erc20 button.metamask {
+  color: white;
+}
+
+.erc20 #results .token {
+  background-color: #91818A;
+  color: #151e3f;
+}
+
+/*  */
+
+button.nftTab[aria-selected='true'], .nft, .nft label {
+  background-color: #a44a3f;
+  color: #000;
+}
+
+.nft, .nft h2 {
+  color: #080f0f;
+}
+
+.nft button.primary {
+  background-color: #B9D2B1;
+  color: black;
+}
+
+.nft button.secondary {
+  background-color: #a4bab7;
+  color: black;
+}
+
+.nft button.metamask {
+  color: white;
+}
+
+.nft #results .token {
+  background-color: #080f0f;
+  color: #a4bab7;
+}
+/*  */
+
+#results img {
+  max-width: 64px;
+}
+
+#results .token {
+  border-radius: 13px;
+  padding: 10px 20px;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+#results .token .balance {
+  word-break: break-all;
+}
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;

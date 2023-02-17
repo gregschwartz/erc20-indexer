@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, Heading, Image, Input, Link, Spacer, SimpleGrid, Text, GridItem, HStack, ButtonGroup } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Heading, Image, Input, Link, Spacer, SimpleGrid, Text, GridItem, HStack, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react';
 import { Alchemy, Network, Utils } from 'alchemy-sdk';
 import { useState } from 'react';
 
@@ -42,7 +42,6 @@ function App() {
     try {
       var data = await alchemy.core.getTokenBalances(userAddress);
       if(!data || data.length == 0) {
-        //put up error somewhere
         showError("No balances found");
         return;
       }
@@ -93,88 +92,67 @@ function App() {
     setIsLoading(false);
   }
   return (
-    <div className="erc20">
-      <nav>
-        <Flex>
-          <Link href='/erc20'>ERC-20 Indexer</Link>
-          <Spacer />
-          <Link href='/nft'>NFT Indexer</Link>
-        </Flex>
-      </nav>
-      <Box w="100vw">
-        <Center>
-          <Flex
-            alignItems={'center'}
-            justifyContent="center"
-            flexDirection={'column'}
-          >
-            <Heading fontSize={36}>
-              ERC-20 Token Indexer
-            </Heading>
-          </Flex>
-        </Center>
-        <Flex
-          w="100%"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent={'center'}
-          mt={5}
-        >
-          <HStack mt={2} spacing={3}>
-            <Button fontSize={20} onClick={getAddressFromMetamask} bgColor="darkOrange">
-              Get address via MetaMask
-            </Button>
-            <label htmlFor={"addressInput"}>or enter address:</label>
-            <Input onChange={(e) => setUserAddress(e.target.value)} id="addressInput" color="black" w="600px" textAlign="center" p={4} bgColor="white" fontSize={24} value={userAddress} placeholder="0xabc..." />
-          </HStack>
-
-          <Button mt={5} mb={20} fontSize={20} onClick={getTokenBalance} bgColor="blue" color="white">
-            Check Balances of ERC-20 Tokens!
-          </Button>
-
-          {isLoading && <Image src="/Ethereum gold coin.gif" />}
-          {error.length>0 && <Heading>Something went wrong: {error}</Heading>}
-
-          {hasQueried ? (
-            <>
-            <HStack spacing={30}>
-              <Heading>ERC-20 token balances</Heading>
-              <Button fontSize={10} onClick={() => {setHideSmallBalances(!hideSmallBalances)}} bgColor="lightBlue" >
-                {hideSmallBalances ? "Show" : "Hide"} small balances
+    <>
+    {error.length>0 && <Heading mt={5} mb={10} textAlign="center">🙈 Uh-oh: {error}</Heading>}
+    <Tabs align='center' size="lg" isFitted variant='line' w="100vw" h="100vh">
+      <TabList>
+        <Tab>ERC-20 Indexer</Tab>
+        <Tab className='nftTab'>NFT Indexer</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel className='erc20'>
+          <Flex w="100%" flexDirection="column" alignItems="center" justifyContent={'center'} mt={5}>
+            <HStack mt={2} spacing={3}>
+              <Button fontSize={20} onClick={getAddressFromMetamask} bgColor="darkOrange" className='metamask'>
+                Get address via MetaMask
               </Button>
+              <label htmlFor={"addressInput"}>or enter address:</label>
+              <Input onChange={(e) => setUserAddress(e.target.value)} id="addressInput" color="black" w="600px" textAlign="center" p={4} bgColor="white" fontSize={24} value={userAddress} placeholder="0xabc..." />
             </HStack>
 
-            <SimpleGrid w={'90vw'} columns={4} spacing={24}>
-              {results.tokenBalances.map((e, i) => {
-                if(hideSmallBalances && Utils.formatUnits(e.tokenBalance, tokenDataObjects[i].decimals) < minimumValueToShow) {
-                  return;
-                }
+            <Button className="primary" mt={5} mb={20} fontSize={20} onClick={getTokenBalance}>
+              Check Balances of ERC-20 Tokens!
+            </Button>
 
-                return (
-                  <Flex
-                    flexDir={'column'}
-                    color="white"
-                    bg="blue"
-                    w={'20vw'}
-                    key={i}
-                  >
-                    <Box>
-                      <b>Symbol:</b> ${tokenDataObjects[i].symbol}&nbsp;
-                    </Box>
-                    <Box>
-                      <b>Balance:</b>&nbsp;
-                      {prettyBalance(e.tokenBalance, i, 5)}
-                    </Box>
-                    <Image src={tokenDataObjects[i].logo} />
-                  </Flex>
-                );
-              })}
-            </SimpleGrid>
-            </>
-          ) : ""}
-        </Flex>
-      </Box>
-    </div>
+            {isLoading && <Image src="/Ethereum gold coin.gif" borderRadius={30} />}
+
+            {hasQueried ? (
+              <>
+              <HStack spacing={30} mb={5}>
+                <Heading>ERC-20 token balances</Heading>
+                <Button className="secondary" fontSize={10} onClick={() => {setHideSmallBalances(!hideSmallBalances)}}>
+                  {hideSmallBalances ? "Show" : "Hide"} small balances
+                </Button>
+              </HStack>
+
+              <SimpleGrid w={'90vw'} columns={4} spacing={12} id="results">
+                {results.tokenBalances.map((e, i) => {
+                  if(hideSmallBalances && Utils.formatUnits(e.tokenBalance, tokenDataObjects[i].decimals) < minimumValueToShow) { return; }
+
+                  return (
+                    <Flex flexDir={'column'} color="black" bg="#aaa" w={'20vw'} key={i} alignItems="center" className='token'>
+                      <Box>
+                        <b>Symbol:</b> ${tokenDataObjects[i].symbol}&nbsp;
+                      </Box>
+                      <Box className='balance'>
+                        <b>Balance:</b>&nbsp;
+                        {prettyBalance(e.tokenBalance, i, 5)}
+                      </Box>
+                      <Image src={tokenDataObjects[i].logo ? tokenDataObjects[i].logo : "/defaultLogoToken.png"} />
+                    </Flex>
+                  );
+                })}
+              </SimpleGrid>
+              </>
+            ) : ""}
+          </Flex>
+        </TabPanel>
+        <TabPanel className='nft'>
+nft stuff goes here
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+    </>
   );
 }
 

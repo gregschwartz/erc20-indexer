@@ -15,12 +15,12 @@ This is an skeleton app that uses the Alchemy SDK rigged to Alchemy's Enhanced A
 
 1. ✅ Add Wallet integration so that any user that connects their wallet can check their ERC-20 token balance
 2. ✅ There is no indication of a request in progress... that's bad UX! Do you think you can add some sort of indication of loading?
+3. ✅ Add some styling! 🎨
 4. ✅ The token balances can sometimes be a little long and break the outline of the page... can you fix that? 🔧
 5. ✅ There is no error-checking for wrongly formed requests, or really any error checking of any kind... can you add some in?
+6. ✅ The images and grid display could look better... anything you can do about that?
 
 ## Challenges Remaining
-- need to style the nav links at the top
-3. ⏭️ Add some styling! 🎨
-6. ⏭️ The images and grid display could look better... anything you can do about that?
-8. ❓ Can you add ENS support for inputs?
 - Retrieve NFTs
+- Make nicer output for NFTs (e.g. larger images, no balance, etc)
+8. ❓ Can you add ENS support for inputs?
