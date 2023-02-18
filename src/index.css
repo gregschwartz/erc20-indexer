@@ -1,10 +1,6 @@
-.erc20, .erc20 label {
+button.tokenTab[aria-selected='true'], .erc20, .erc20 h2, .erc20 label {
   background-color: #b2a3b5;
   color: #000;
-}
-
-.erc20, .erc20 h2 {
-  color: #91818A;
 }
 
 .erc20 button.primary {
@@ -17,60 +13,77 @@
   color: white;
 }
 
-.erc20 button.metamask {
-  color: white;
-}
-
-.erc20 #results .token {
+#tokenResults .token {
   background-color: #91818A;
   color: #151e3f;
 }
 
-/*  */
-
-button.nftTab[aria-selected='true'], .nft, .nft label {
-  background-color: #a44a3f;
-  color: #000;
-}
-
-.nft, .nft h2 {
-  color: #080f0f;
-}
-
-.nft button.primary {
-  background-color: #B9D2B1;
-  color: black;
-}
-
-.nft button.secondary {
-  background-color: #a4bab7;
-  color: black;
-}
-
-.nft button.metamask {
-  color: white;
-}
-
-.nft #results .token {
-  background-color: #080f0f;
-  color: #a4bab7;
-}
-/*  */
-
-#results img {
+#tokenResults img {
   max-width: 64px;
 }
 
-#results .token {
+/*  */
+
+button.nftTab[aria-selected='true'], .nft, .nft h2, .nft label {
+  background-color: #A4BAB7;
+  color: #034732;
+}
+
+.nft button.primary {
+  background-color: #008148;
+  color: white;
+}
+
+.nft button.primary:hover {
+
+  opacity: 0.9;
+}
+
+/* there is no secondary button */
+
+.nft #nftResults .token {
+  background-color: #613a3a;
+  color: #f5f749;
+}
+
+#nftResults img {
+  min-width: 15vw;
+}
+
+/*  */
+
+button[aria-selected=true], button[data-selected] {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-width: 0;
+}
+
+button.metamask {
+  background-color: darkOrange;
+  color: white;
+}
+
+button.metamask:hover {
+  background-color: darkOrange;
+  color: #111;
+}
+
+.token {
   border-radius: 13px;
   padding: 10px 20px;
   text-align: center;
   word-wrap: break-word;
 }
 
-#results .token .balance {
+.token .balance {
   word-break: break-all;
 }
+
+.erc20, .nft {
+  min-height: 100vh;
+}
+
+/* default styling below here */
 
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;

@@ -8,19 +8,23 @@ This is an skeleton app that uses the Alchemy SDK rigged to Alchemy's Enhanced A
 2. Start application by running `npm run dev`
 3. Open http://localhost:5173/
 4. Click `Get address via MetaMask` or paste an address in, then click the "Check Balances" button
-5. Click `Show small balances` to see any tokens that were hidden because they had a small balance (or 0 balance)
+5. Click `Show small balances` to see any tokens that were hidden because they had a small (value <= 0.0001) balance
 6. Click `NFT Indexer` and do the same to see NFTs
 
-## Challenges Completed
+## ERC20 Challenges Completed
 
-1. ✅ Add Wallet integration so that any user that connects their wallet can check their ERC-20 token balance
-2. ✅ There is no indication of a request in progress... that's bad UX! Do you think you can add some sort of indication of loading?
-3. ✅ Add some styling! 🎨
-4. ✅ The token balances can sometimes be a little long and break the outline of the page... can you fix that? 🔧
-5. ✅ There is no error-checking for wrongly formed requests, or really any error checking of any kind... can you add some in?
-6. ✅ The images and grid display could look better... anything you can do about that?
+1. Token balance formatting
+1. User wallet integration
+1. Progress status
+1. Styling
+1. Error checking
+1. Pretty grid display
 
-## Challenges Remaining
-- Retrieve NFTs
-- Make nicer output for NFTs (e.g. larger images, no balance, etc)
-8. ❓ Can you add ENS support for inputs?
+## NFTs Challenges Completed
+
+1. Token balance formatting (can't find a way to show value, but showed floor for collection)
+1. User wallet integration
+1. Progress status
+1. Styling
+1. Error checking
+1. Pretty grid display
