@@ -210,6 +210,9 @@ function App() {
                     <Flex flexDir={'column'} key={i} alignItems="center" className='token'>
                       <Box><Link href={e.tokenUri.gateway} target="_blank">{e.title}</Link></Box>
                       <Link href={e.media[0].gateway} target="_blank"><Image src={e.media[0].gateway} /></Link>
+                      <Box fontSize="xs">
+                        Balance: {e.balance}
+                      </Box>
                       <Box>
                         Collection: <Link href={e.contract.openSea.externalUrl} target="_blank">{e.contract.openSea.collectionName}</Link>
                       </Box>

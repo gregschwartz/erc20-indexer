@@ -7,7 +7,6 @@ Chakra was surprisingly unhelpful, and not being able to use a layout grid was f
 <Button 
 fontSize={{ base: '11px', md: 'md', lg: 'xl' }} 
 w={{ base: '33vw', md: '40vw', lg: '28vw' }}
-onClick=...
 ``` 
 
 Like we were supposed to, I used the Alchemy SDK to look up both tokens (`alchemy.core.getTokenBalances()`) and NFTs (`alchemy.nft.getNftsForOwner()`).
