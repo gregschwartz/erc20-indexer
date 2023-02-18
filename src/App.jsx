@@ -3,14 +3,21 @@ import { Alchemy, Network, Utils } from 'alchemy-sdk';
 import { useState } from 'react';
 
 function App() {
-  const [userAddress, setUserAddress] = useState('');
+  const [userAddress, setUserAddress] = useState('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [hideSmallBalances, setHideSmallBalances] = useState(true);
-  const [results, setResults] = useState([]);
   const [hasQueried, setHasQueried] = useState(false);
+  const [hideSmallBalances, setHideSmallBalances] = useState(true);
+  const [tokenResults, setTokenResults] = useState([]);
+  const [nftResults, setNftResults] = useState([]);
   const [tokenDataObjects, setTokenDataObjects] = useState([]);
 
+  const alchemy = new Alchemy({
+    apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
+    network: Network.ETH_MAINNET,
+  });
+
+  //configuration
   const minimumValueToShow = 0.0001;
 
   async function getAddressFromMetamask() {
@@ -25,19 +32,46 @@ function App() {
     setUserAddress(addressArray[0]);
   }
 
-  async function getTokenBalance() {
+  async function getNftsOwned() {
     setError("");
     setIsLoading(true);
+    setHasQueried(false);
+    setNftResults([]);
 
     if(userAddress.length==0) {
       showError("Please enter an address");
       return;
     }
 
-    const alchemy = new Alchemy({
-      apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
-      network: Network.ETH_MAINNET,
-    });
+    try {
+      var data = await alchemy.nft.getNftsForOwner(userAddress);
+      if(!data || data.length == 0) {
+        showError("No NFTs found");
+        return;
+      }
+
+      setNftResults(data.ownedNfts);
+      // console.log(data);
+    } catch(exception) {
+      console.log("Error getting NFTs", exception);
+      showError(exception.message);
+      return;
+    }
+
+    setHasQueried(true);
+    setIsLoading(false);
+  }
+
+  async function getTokenBalance() {
+    setError("");
+    setIsLoading(true);
+    setHasQueried(false);
+    setTokenResults([]);
+
+    if(userAddress.length==0) {
+      showError("Please enter an address");
+      return;
+    }
 
     try {
       var data = await alchemy.core.getTokenBalances(userAddress);
@@ -46,8 +80,8 @@ function App() {
         return;
       }
 
-      setResults(data);
-      console.log(data);
+      setTokenResults(data.tokenBalances);
+      // console.log(data);
     } catch(exception) {
       console.log("Error getting balances", exception);
       showError(exception.message);
@@ -62,7 +96,7 @@ function App() {
       tokenDataPromises.push(tokenData);
     }
     setTokenDataObjects(await Promise.all(tokenDataPromises));
-    console.log(tokenDataObjects);
+    // console.log(tokenDataObjects);
 
     setHasQueried(true);
     setIsLoading(false);
@@ -81,7 +115,6 @@ function App() {
     
     const rounded  = (+decimals).toFixed(decimalPlaces);
     const pretty = whole + rounded.toString().substring(1);
-    console.log(str, whole, decimals, "rounded:", rounded, "t.f.", pretty);
     return pretty;
   }
 
@@ -96,18 +129,18 @@ function App() {
     {error.length>0 && <Heading mt={5} mb={10} textAlign="center">🙈 Uh-oh: {error}</Heading>}
     <Tabs align='center' size="lg" isFitted variant='line' w="100vw" h="100vh">
       <TabList>
-        <Tab>ERC-20 Indexer</Tab>
+        <Tab className='tokenTab'>ERC-20 Indexer</Tab>
         <Tab className='nftTab'>NFT Indexer</Tab>
       </TabList>
       <TabPanels>
         <TabPanel className='erc20'>
           <Flex w="100%" flexDirection="column" alignItems="center" justifyContent={'center'} mt={5}>
-            <HStack mt={2} spacing={3}>
-              <Button fontSize={20} onClick={getAddressFromMetamask} bgColor="darkOrange" className='metamask'>
+            <HStack mt={2} spacing={{ base: 0, md: 1, lg: 3 }}>
+              <Button fontSize={{ base: '11px', md: 'md', lg: 'xl' }} w={{ base: '33vw', md: '40vw', lg: '28vw' }} onClick={getAddressFromMetamask} className='metamask'>
                 Get address via MetaMask
               </Button>
               <label htmlFor={"addressInput"}>or enter address:</label>
-              <Input onChange={(e) => setUserAddress(e.target.value)} id="addressInput" color="black" w="600px" textAlign="center" p={4} bgColor="white" fontSize={24} value={userAddress} placeholder="0xabc..." />
+              <Input onChange={(e) => setUserAddress(e.target.value)} id="addressInput" color="black" w={{ base: '54vw', md: '50vw', lg: '50vw' }} fontSize={{ base: '14px', md: 'md', lg: 'xl' }} textAlign="center" p={4} bgColor="white" value={userAddress} placeholder="0xabc..." />
             </HStack>
 
             <Button className="primary" mt={5} mb={20} fontSize={20} onClick={getTokenBalance}>
@@ -125,14 +158,14 @@ function App() {
                 </Button>
               </HStack>
 
-              <SimpleGrid w={'90vw'} columns={4} spacing={12} id="results">
-                {results.tokenBalances.map((e, i) => {
-                  if(hideSmallBalances && Utils.formatUnits(e.tokenBalance, tokenDataObjects[i].decimals) < minimumValueToShow) { return; }
+              <SimpleGrid w={'90vw'} columns={4} spacing={12} id="tokenResults">
+                {tokenResults.map((e, i) => {
+                  if(tokenDataObjects[i]==undefined || (hideSmallBalances && Utils.formatUnits(e.tokenBalance, tokenDataObjects[i].decimals) < minimumValueToShow)) { return; }
 
                   return (
                     <Flex flexDir={'column'} color="black" bg="#aaa" w={'20vw'} key={i} alignItems="center" className='token'>
                       <Box>
-                        <b>Symbol:</b> ${tokenDataObjects[i].symbol}&nbsp;
+                        <b>Symbol:</b> {tokenDataObjects[i].symbol}&nbsp;
                       </Box>
                       <Box className='balance'>
                         <b>Balance:</b>&nbsp;
@@ -148,7 +181,48 @@ function App() {
           </Flex>
         </TabPanel>
         <TabPanel className='nft'>
-nft stuff goes here
+          <Flex w="100%" flexDirection="column" alignItems="center" justifyContent={'center'} mt={5}>
+            <HStack mt={2} spacing={{ base: 0, md: 1, lg: 3 }}>
+              <Button fontSize={{ base: '11px', md: 'md', lg: 'xl' }} w={{ base: '33vw', md: '40vw', lg: '28vw' }} onClick={getAddressFromMetamask} bgColor="darkOrange" className='metamask'>
+                Get address via MetaMask
+              </Button>
+              <label htmlFor={"addressInput"}>or enter address:</label>
+              <Input onChange={(e) => setUserAddress(e.target.value)} id="addressInput" color="black" w={{ base: '54vw', md: '50vw', lg: '50vw' }} fontSize={{ base: '14px', md: 'md', lg: 'xl' }} textAlign="center" p={4} bgColor="white" value={userAddress} placeholder="0xabc..." />
+            </HStack>
+
+            <Button className="primary" mt={5} mb={20} fontSize={20} onClick={getNftsOwned}>
+              Check NFTs owned!
+            </Button>
+
+            {isLoading && <Image src="/Ethereum logo revolving.gif" borderRadius={30} />}
+
+            {hasQueried ? (
+              <>
+              <HStack spacing={30} mb={5}>
+                <Heading>NFTs owned</Heading>
+              </HStack>
+
+              <SimpleGrid w={'90vw'} columns={3} spacing={12} id="nftResults">
+                {nftResults.map((e, i) => {
+                  if(e.title.length == 0 && e.media.length==0) { return; }
+
+                  return (
+                    <Flex flexDir={'column'} key={i} alignItems="center" className='token'>
+                      <Box><Link href={e.tokenUri.gateway} target="_blank">{e.title}</Link></Box>
+                      <Link href={e.media[0].gateway} target="_blank"><Image src={e.media[0].gateway} /></Link>
+                      <Box>
+                        Collection: <Link href={e.contract.openSea.externalUrl} target="_blank">{e.contract.openSea.collectionName}</Link>
+                      </Box>
+                      <Box>
+                        {e.contract.openSea.floorPrice >0 && "Floor: " + e.contract.openSea.floorPrice +" ETH"}
+                      </Box>
+                    </Flex>
+                  );
+                })}
+              </SimpleGrid>
+              </>
+            ) : ""}
+          </Flex>
         </TabPanel>
       </TabPanels>
     </Tabs>
