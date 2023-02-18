@@ -2,11 +2,12 @@
 
 ## How you achieved the goals of the project
 
-Chakra was a pain to use, and not being able to use a layout grid was frustrating. Why do you like it better? I did like the ability to specify sizes by breakpoints though, e.g. 
+Chakra was surprisingly unhelpful, and not being able to use a layout grid was frustrating. Why do you like it better? I did like the ability to specify sizes by breakpoints though, e.g. 
 ```js
 <Button 
 fontSize={{ base: '11px', md: 'md', lg: 'xl' }} 
-w={{ base: '33vw', md: '40vw', lg: '28vw' }} onClick=...
+w={{ base: '33vw', md: '40vw', lg: '28vw' }}
+onClick=...
 ``` 
 
 Like we were supposed to, I used the Alchemy SDK to look up both tokens (`alchemy.core.getTokenBalances()`) and NFTs (`alchemy.nft.getNftsForOwner()`).
