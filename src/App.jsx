@@ -118,6 +118,14 @@ function App() {
     return pretty;
   }
 
+  function onEnterKeyPressRun(event, nextFunction) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      nextFunction();
+    }
+  }
+
   function showError(text) {
     console.log("Show error", text);
     setError(text);
@@ -140,7 +148,7 @@ function App() {
                 Get address via MetaMask
               </Button>
               <label htmlFor={"addressInput"}>or enter address:</label>
-              <Input onChange={(e) => setUserAddress(e.target.value)} id="addressInput" color="black" w={{ base: '54vw', md: '50vw', lg: '50vw' }} fontSize={{ base: '14px', md: 'md', lg: 'xl' }} textAlign="center" p={4} bgColor="white" value={userAddress} placeholder="0xabc..." />
+              <Input onChange={(e) => setUserAddress(e.target.value)} onKeyDown={(event) => {onEnterKeyPressRun(event, getTokenBalance)}} id="addressInput" color="black" w={{ base: '54vw', md: '50vw', lg: '50vw' }} fontSize={{ base: '14px', md: 'md', lg: 'xl' }} textAlign="center" p={4} bgColor="white" value={userAddress} placeholder="0xabc..." />
             </HStack>
 
             <Button className="primary" mt={5} mb={20} fontSize={20} onClick={getTokenBalance}>
@@ -187,7 +195,7 @@ function App() {
                 Get address via MetaMask
               </Button>
               <label htmlFor={"addressInput"}>or enter address:</label>
-              <Input onChange={(e) => setUserAddress(e.target.value)} id="addressInput" color="black" w={{ base: '54vw', md: '50vw', lg: '50vw' }} fontSize={{ base: '14px', md: 'md', lg: 'xl' }} textAlign="center" p={4} bgColor="white" value={userAddress} placeholder="0xabc..." />
+              <Input onChange={(e) => setUserAddress(e.target.value)} onKeyDown={(event) => {onEnterKeyPressRun(event, getNftsOwned)}} id="addressInput" color="black" w={{ base: '54vw', md: '50vw', lg: '50vw' }} fontSize={{ base: '14px', md: 'md', lg: 'xl' }} textAlign="center" p={4} bgColor="white" value={userAddress} placeholder="0xabc..." />
             </HStack>
 
             <Button className="primary" mt={5} mb={20} fontSize={20} onClick={getNftsOwned}>
